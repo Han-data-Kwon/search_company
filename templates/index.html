@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>국내 뉴스 & 기업 정보 키워드 검색기</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h2 class="mb-4">📁 사업자등록 상태 일괄조회</h2>
+
+    <!-- 파일 업로드 폼 -->
+    <form action="/upload_biz" method="post" enctype="multipart/form-data" class="mb-4">
+        <div class="input-group">
+            <input type="file" name="file" class="form-control" accept=".xlsx" required>
+            <button type="submit" class="btn btn-primary">조회 시작</button>
+        </div>
+        <div class="form-text">※ 엑셀에 '사업자등록번호' 컬럼이 있어야 합니다.</div>
+    </form>
+
+    <!-- 초기화 버튼 -->
+    {% if results %}
+    <form action="/clear_all" method="post" class="mb-3">
+        <button type="submit" class="btn btn-danger btn-sm">전체 초기화</button>
+    </form>
+    {% endif %}
+
+    <!-- 조회 결과 테이블 -->
+    {% if results %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>사업자등록번호</th>
+                    <th>상태</th>
+                    <th>과세유형</th>
+                    <th>폐업일자</th>
+                    <th>조회일시</th>
+                    <th>삭제</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ row['사업자등록번호'] }}</td>
+                    <td>{{ row['상태'] }}</td>
+                    <td>{{ row['과세유형'] }}</td>
+                    <td>{{ row['폐업일자'] or '-' }}</td>
+                    <td>{{ row['조회일시'] }}</td>
+                    <td>
+                        <form action="/delete_row" method="post" style="display:inline;">
+                            <input type="hidden" name="index" value="{{ loop.index0 }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
